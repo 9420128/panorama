@@ -1,0 +1,146 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+.card {
+  padding: 2em;
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  /* text-align: center; */
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+.col-0 {
+  width: 100%;
+}
+
+.col-image {
+  width: 300px;
+}
+.col-number {
+  text-align: right;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+@media print {
+  html,
+  body {
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+
+  body,
+  #print {
+    display: block !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+  }
+
+  #print {
+    page-break-after: avoid;
+    page-break-before: avoid;
+    page-break-inside: avoid;
+    overflow: visible !important;
+    height: auto !important;
+    position: relative !important;
+    top: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    width: 100%;
+  }
+
+  .no-print,
+  button {
+    display: none; /* скрываем кнопку печати */
+  }
+
+  table {
+    width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  th,
+  td {
+    font-size: 12px;
+    line-height: 1;
+    padding: 2px 4px;
+    color: #333;
+  }
+  tr,
+  td,
+  th {
+    page-break-inside: avoid;
+  }
+
+  .col-number {
+    min-width: 80px !important;
+    max-width: 80px !important;
+  }
+
+  .col-text {
+    width: 100%;
+  }
+
+  .row-sum > * {
+    font-size: 13px;
+  }
+
+  @page {
+    margin: 10mm !important;
+  }
+}
