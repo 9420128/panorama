@@ -37,36 +37,27 @@ export const useOrdersStore = defineStore("orders", () => {
   // === Методы для TABLE DATA ===
   const setTableData = () => {
 
-    order.tableData = order.tableData.map(row => {
-      // 🔹 Нормализация options
+    console.log(order.tableData)
+
+    const newData = order.tableData.map(row => {
       const normalizedOptions = Array.isArray(row.options)
-        ? row.options.map(opt => {
-          if (Array.isArray(opt)) {
-            const [name = '', price = 0, quantity = 0, total = 0] = opt
-            return { name, price, quantity, total }
-          }
-          return opt
-        })
+        ? row.options.map(opt => Array.isArray(opt)
+          ? { name: opt[0] ?? '', price: opt[1] ?? 0, quantity: opt[2] ?? 0, total: opt[3] ?? 0 }
+          : opt)
         : []
 
-      // 🔹 Нормализация price
       const normalizedPrice = Array.isArray(row.price)
-        ? row.price.map(p => {
-          if (Array.isArray(p)) {
-            const [price = 0, quantity = 0, total = 0] = p
-            return { price, quantity, total }
-          }
-          return p
-        })
+        ? row.price.map(p => Array.isArray(p)
+          ? { price: p[0] ?? 0, quantity: p[1] ?? 0, total: p[2] ?? 0 }
+          : p)
         : []
 
-      return {
-        ...row,
-        options: normalizedOptions,
-        price: normalizedPrice,
-      }
+      return { ...row, options: normalizedOptions, price: normalizedPrice }
     })
+
+    order.tableData.splice(0, order.tableData.length, ...newData)
   }
+
 
   const updatePage = async () => {
     try {
@@ -121,7 +112,6 @@ export const useOrdersStore = defineStore("orders", () => {
         orders.value = fetchedOrders.map(order => {
           return {
             ...order,
-            // Приводим tableData к объектной форме (если нужно)
             tableData: order.tableData.map(block => ({
               ...block,
               options: block.options?.map(opt => ({

@@ -33,7 +33,6 @@ const { tableData, fileName, handleFileUpload, createRow, cellUpdate, cellRemove
     <div v-if="fileName" class="text-sm text-gray-600 mb-2">Загружен файл: {{ fileName }}</div>
   </div>
   <div id="print" class="p-6 max-w-4xl mx-auto font-sans">
-    <h3 class="font-bold text-center text-[18px]">{{ total.name }}</h3>
     <HeaderBlock />
 
     <div v-if="tableData.length">

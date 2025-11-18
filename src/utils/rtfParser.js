@@ -29,7 +29,7 @@ function parseRTFWithImages(rtfData) {
 
     const blob = new Blob([bytes], { type })
     const url = URL.createObjectURL(blob)
-    return `#${arr[0]}#<img src="${url}" alt="RTF Image" />`
+    return `<img src="${url}" alt="RTF Image" />`
   } catch (e) {
     console.warn('⚠️ Ошибка при создании картинки:', e)
   }

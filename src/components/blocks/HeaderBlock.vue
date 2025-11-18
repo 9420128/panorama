@@ -1,4 +1,5 @@
 <template>
+  <h3 class="font-bold text-center text-[18px]">{{ orderStore.order.total.name }}</h3>
   <div class="space-y-3 text-gray-800 text-sm w-full mt-4">
     <div class="flex items-center gap-4">
       <!-- Заказчик -->
