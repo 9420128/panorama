@@ -1,4 +1,3 @@
-import { ref } from 'vue'
 import { useOrdersStore } from '@/stores/useOrdersStore'
 import { decodeHexRTF } from '@/utils/rtfParser'
 import { formatRub } from '@/utils/calcSum'
@@ -9,13 +8,12 @@ export function useTableData(calcSum) {
 
   const tableData = ordersStore.order.tableData
   const total = ordersStore.order.total
-  const percent = ordersStore.order.percent
+
 
   function handleFileUpload(event) {
     const file = event.target.files[0]
     if (!file) return
     total.name = file.name
-    ordersStore.order.id = ''
 
     const reader = new FileReader()
     reader.onload = (e) => {
@@ -205,6 +203,5 @@ export function useTableData(calcSum) {
     cellUpdate,
     cellRemove,
     total,
-    percent
   }
 }

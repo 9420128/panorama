@@ -4,18 +4,49 @@
 const pictRegexImg = /89504E47/
 const pictRegex = /^.*\\\*/
 
+// function parseRTFWithImages(rtfData) {
+//   const arr = rtfData.split('#').filter(Boolean)
+//   // ищем начало картинки (PNG или JPEG)
+//   const imgRegex = /(89504e47|ffd8ff)[0-9a-fA-F\s]*/gi
+//
+//   const match = arr[1].match(imgRegex)
+//
+//   let hex = match[0]
+//   .replace(/\s+/g, '') // убираем пробелы и переносы
+//     .trim()
+//
+//   if (!hex || hex.length < 20) return
+//
+//   // определяем тип
+//   const type = hex.startsWith('89504e47')
+//     ? 'image/png'
+//     : hex.startsWith('ffd8ff')
+//       ? 'image/jpeg'
+//       : 'application/octet-stream'
+//
+//   try {
+//     const bytes = new Uint8Array(hex.match(/.{1,2}/g).map((b) => parseInt(b, 16)))
+//
+//     const blob = new Blob([bytes], { type })
+//     const url = URL.createObjectURL(blob)
+//     return `<img src="${url}" alt="RTF Image" />`
+//   } catch (e) {
+//     console.warn('⚠️ Ошибка при создании картинки:', e)
+//   }
+//
+//   return rtfData
+// }
+
 function parseRTFWithImages(rtfData) {
   const arr = rtfData.split('#').filter(Boolean)
+
   // ищем начало картинки (PNG или JPEG)
   const imgRegex = /(89504e47|ffd8ff)[0-9a-fA-F\s]*/gi
-
   const match = arr[1].match(imgRegex)
+  if (!match || match.length === 0) return rtfData
 
-  let hex = match[0]
-  .replace(/\s+/g, '') // убираем пробелы и переносы
-    .trim()
-
-  if (!hex || hex.length < 20) return
+  let hex = match[0].replace(/\s+/g, '').trim()
+  if (!hex || hex.length < 20) return rtfData
 
   // определяем тип
   const type = hex.startsWith('89504e47')
@@ -27,9 +58,15 @@ function parseRTFWithImages(rtfData) {
   try {
     const bytes = new Uint8Array(hex.match(/.{1,2}/g).map((b) => parseInt(b, 16)))
 
-    const blob = new Blob([bytes], { type })
-    const url = URL.createObjectURL(blob)
-    return `<img src="${url}" alt="RTF Image" />`
+    // конвертируем в Base64
+    let binary = ''
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i])
+    }
+    const base64 = btoa(binary)
+
+    // возвращаем тег <img> с Base64
+    return `<img src="data:${type};base64,${base64}" alt="RTF Image" />`
   } catch (e) {
     console.warn('⚠️ Ошибка при создании картинки:', e)
   }

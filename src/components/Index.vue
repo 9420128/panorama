@@ -7,22 +7,27 @@ import HeaderBlock from './blocks/HeaderBlock.vue'
 import { calculateSum } from '@/utils/calcSum'
 import { useTableData } from '@/composables/useTableData'
 import { setClassName } from '@/utils/rtfUtils'
+import { useOrdersStore } from '@/stores/useOrdersStore.js'
+import LogoutBlock from '@/components/blocks/LogoutBlock.vue'
+
+const ordersStore = useOrdersStore()
 
 const calcSum = () => {
-  calculateSum(tableData, percent, total)
+  calculateSum(tableData, ordersStore.order.percent, total)
 }
 
-const { tableData, fileName, handleFileUpload, createRow, cellUpdate, cellRemove, total, percent } = useTableData(calcSum)
+const { tableData, fileName, handleFileUpload, createRow, cellUpdate, cellRemove, total } = useTableData(calcSum)
 
 </script>
 
 <template>
+	<LogoutBlock />
   <div class="flex flex-col items-center py-4 gap-2">
     <PercentBlock @calculateSum="calcSum" />
     <ButtonBlock @createRow="createRow" />
   </div>
 
-  <div class="p-6 max-w-4xl mx-auto font-sans flex gap-3 items-center no-print">
+  <div class="p-6 max-w-4xl flex items-center no-print">
     <input
       type="file"
       accept=".rtf"
@@ -32,7 +37,7 @@ const { tableData, fileName, handleFileUpload, createRow, cellUpdate, cellRemove
 
     <div v-if="fileName" class="text-sm text-gray-600 mb-2">Загружен файл: {{ fileName }}</div>
   </div>
-  <div id="print" class="p-6 max-w-4xl mx-auto font-sans">
+  <div id="print" class="p-4 sm:p-6 max-w-full sm:max-w-4xl mx-auto overflow-auto h-[80vh]">
     <HeaderBlock />
 
     <div v-if="tableData.length">

@@ -11,7 +11,6 @@ export const useOrdersStore = defineStore("orders", () => {
 
   // Основной объект заказа
   const order = reactive({
-    id: '',
     user: {
       client: '',
       phone: '',
@@ -58,16 +57,19 @@ export const useOrdersStore = defineStore("orders", () => {
     order.tableData.splice(0, order.tableData.length, ...newData)
   }
 
-
-  const updatePage = async () => {
+  const updatePage = async (orderId) => {
+    if(!orderId) {
+      console.log('orderId  не найден')
+      return
+    }
     try {
-      await updateOrder(order.id, {
+      await updateOrder(orderId, {
         user: order.user,
         total: order.total,
         tableData: order.tableData
       });
 
-      const index = orders.value.findIndex(o => o.id === order.id)
+      const index = orders.value.findIndex(o => o.id === orderId)
       if (index !== -1) {
         // Делаем копию, чтобы реактивность точно сработала
         orders.value[index] = JSON.parse(JSON.stringify(order))
@@ -80,11 +82,15 @@ export const useOrdersStore = defineStore("orders", () => {
   }
 
 
-  const removePage = async (id) => {
+  const removePage = async (orderId) => {
+    if(!orderId) {
+      console.log('orderId  не найден')
+      return
+    }
     try {
-      await removeOrder(id)
+      await removeOrder(orderId)
       // локально удаляем заказ
-      orders.value = orders.value.filter(o => o.id !== id)
+      orders.value = orders.value.filter(o => o.id !== orderId)
     } catch (err) {
       console.error('Ошибка при удалении:', err)
     }
@@ -94,9 +100,12 @@ export const useOrdersStore = defineStore("orders", () => {
   // === Сохранение текущего заказа в Firebase ===
   const savePage = async () => {
     try {
-      await saveOrder(order)
-      alert("Данные сохранены в Firebase!")
-      orders.value.push(JSON.parse(JSON.stringify(order))) // сохраняем локально копию
+      const orderId = await saveOrder(order)
+      alert("Данные сохранены в Firebase! Id: " + orderId)
+      const localCopy = JSON.parse(JSON.stringify(order))
+      localCopy.id = orderId
+      orders.value.push(localCopy)
+      clearOrder()
     } catch (err) {
       console.error(err)
       alert("Ошибка сохранения")
@@ -112,6 +121,7 @@ export const useOrdersStore = defineStore("orders", () => {
         orders.value = fetchedOrders.map(order => {
           return {
             ...order,
+            // Приводим tableData к объектной форме (если нужно)
             tableData: order.tableData.map(block => ({
               ...block,
               options: block.options?.map(opt => ({
@@ -146,6 +156,23 @@ export const useOrdersStore = defineStore("orders", () => {
       console.error("Ошибка при получении заказов:", err)
       alert("Не удалось загрузить заказы")
     }
+  }
+
+  function clearOrder() {
+    order.user.client = ''
+    order.user.phone = ''
+    order.user.address = ''
+
+    order.total.units = 0
+    order.total.qty = 0
+    order.total.sum = 0
+    order.total.name = `Коммерческое предложение 958${day} от ${day}.${month}.${year}`
+
+    order.percent.units = 0
+    order.percent.components = 0
+    order.percent.services = 0
+
+    order.tableData.length = 0
   }
 
   return {
