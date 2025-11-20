@@ -5,7 +5,7 @@
 			@click="close"
 	>
 		<div
-				class="bg-white rounded-lg w-[420px] p-5 relative shadow-lg"
+				class="bg-white rounded-lg w-[420px] p-5 relative shadow-lg m-2"
 				@click.stop
 		>
 			<h2 class="text-base font-semibold mb-3">Добавить элемент</h2>
@@ -17,7 +17,7 @@
 					<label class="block text-sm font-medium mb-1">Тип</label>
 					<select
 							v-model="localForm.type"
-							class="border border-gray-300 rounded-md p-2 w-full text-sm focus:ring-2 focus:ring-blue-500"
+							class="border border-gray-300 rounded-md p-2 w-full text-sm focus:ring-2 focus:ring-blue-500 h-[38px]"
 					>
 						<option value="components">Комплектующие</option>
 						<option value="services">Услуги</option>

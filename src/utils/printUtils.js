@@ -42,6 +42,11 @@ export const openPrintWindow = async (fileName = 'document') => {
       <head>
         <title>${fileName}</title>
         ${styles}
+        <style>
+        body {
+          color: #333333;
+        }
+      </style>
       </head>
       <body>${printContent.outerHTML}</body>
     </html>
