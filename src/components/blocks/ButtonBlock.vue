@@ -1,12 +1,25 @@
 <template>
   <div class="no-print">
+    <div class="mb-3 flex justify-center">
+      <input
+        v-model="searchQuery"
+        type="text"
+        placeholder="Поиск заказа..."
+        class="border px-3 py-2 rounded w-full max-w-md"
+      />
+    </div>
+
     <OrdersListBlock v-if="Array.isArray(orders)" :orders="orders" @selectOrder="handleSelectOrder" @deleteOrder="handleDeleteOrder" />
+
     <div class="flex flex-wrap justify-center gap-2 mb-3">
       <AppButton variant="success" size="sm" @click.stop="openModal = true">Добавить</AppButton>
       <AppButton variant="primary" size="sm" @click="printPage">Печать / PDF</AppButton>
       <AppButton variant="danger" size="sm" @click="savePageHandler">Сохранить</AppButton>
-      <AppButton variant="warning" size="sm" @click="getOrdersHandler">Загрузить</AppButton>
+      <AppButton variant="warning" size="sm" @click="getOrdersHandler">
+        {{ isLoaded ? `Загружено (${allOrdersCount})` : 'Загрузить' }}
+      </AppButton>
     </div>
+
     <!-- Модальное окно -->
 	  <ModalBlock
 			  :open="openModal"
@@ -17,7 +30,7 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useOrdersStore } from "@/stores/useOrdersStore";
 import AppButton from '@/components/ui/AppButton.vue'
 import OrdersListBlock from './OrdersListBlock.vue'
@@ -30,7 +43,17 @@ const emit = defineEmits(['createRow'])
 const openModal = ref(false)
 const orderId = ref(null);
 
+const searchQuery = ref('')
+let searchTimeout = null
+const isLoaded = ref(false)
 
+watch(searchQuery, (newValue) => {
+  clearTimeout(searchTimeout)
+
+  searchTimeout = setTimeout(() => {
+    handleSearch(newValue)
+  }, 400) // debounce 400мс
+})
 
 const addItem = (form) => {
   if (!form.name || form.price <= 0 || form.quantity <= 0) {
@@ -48,6 +71,17 @@ const ordersStore = useOrdersStore();
 const orders = computed(() => ordersStore.orders);
 const { order, setTableData, savePage, fetchOrders, removePage, updatePage } = ordersStore;
 
+const allOrdersCount = computed(() => ordersStore.allOrders?.length || 0)
+
+async function handleSearch(query) {
+  if (!query) {
+    fetchOrders() // вернуть все
+    return
+  }
+
+  await ordersStore.searchOrders(query)
+}
+
 // Print
 const printPage = async () => {
   await openPrintWindow(order.total.name)
@@ -62,8 +96,10 @@ function savePageHandler(){
     updatePage(orderId.value);
 }
 
-function getOrdersHandler (){
-  fetchOrders();
+async function getOrdersHandler (){
+  await fetchOrders();
+
+  isLoaded.value = true
 }
 
 function handleDeleteOrder(orderId) {

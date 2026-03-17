@@ -1,6 +1,6 @@
 <template>
 	<div class="mt-2 no-print">
-		<AppButton variant="" @click="signOutUser">Выйти мз приложения</AppButton>
+		<AppButton variant="" @click="signOutUser">Выйти из приложения</AppButton>
 	</div>
 </template>
 

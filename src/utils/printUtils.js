@@ -51,10 +51,18 @@ export const openPrintWindow = async (fileName = 'document') => {
       <body>${printContent.outerHTML}</body>
     </html>
   `)
-  win.document.close()
-  win.focus()
-  win.print()
-  win.close()
 
-  printStore.stopPrint()
+  win.document.close()
+
+  // ✅ Ждём загрузку
+  win.onload = () => {
+    win.focus()
+
+    // Небольшая задержка — даёт гарантированное применение стилей
+    setTimeout(() => {
+      win.print()
+      win.close()
+      printStore.stopPrint()
+    }, 300)
+  }
 }

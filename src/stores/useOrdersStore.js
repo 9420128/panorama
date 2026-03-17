@@ -32,11 +32,12 @@ export const useOrdersStore = defineStore("orders", () => {
 
   // Локальное хранилище сохранённых заказов
   const orders = ref([]);
+  const allOrders = ref([]);
 
   // === Методы для TABLE DATA ===
   const setTableData = () => {
 
-    console.log(order.tableData)
+    // console.log(order.tableData)
 
     const newData = order.tableData.map(row => {
       const normalizedOptions = Array.isArray(row.options)
@@ -91,6 +92,7 @@ export const useOrdersStore = defineStore("orders", () => {
       await removeOrder(orderId)
       // локально удаляем заказ
       orders.value = orders.value.filter(o => o.id !== orderId)
+      allOrders.value = orders.value.filter(o => o.id !== orderId)
     } catch (err) {
       console.error('Ошибка при удалении:', err)
     }
@@ -118,7 +120,7 @@ export const useOrdersStore = defineStore("orders", () => {
       const fetchedOrders = await getOrders()
 
       if (fetchedOrders.length) {
-        orders.value = fetchedOrders.map(order => {
+        const normalized = fetchedOrders.map(order => {
           return {
             ...order,
             // Приводим tableData к объектной форме (если нужно)
@@ -149,9 +151,12 @@ export const useOrdersStore = defineStore("orders", () => {
             // id: order.id
           }
         })
+
+        orders.value = normalized
+        allOrders.value = normalized
       }
 
-      console.log("✅ Заказы загружены:", orders.value.length)
+      // console.log("✅ Заказы загружены:", orders.value.length)
     } catch (err) {
       console.error("Ошибка при получении заказов:", err)
       alert("Не удалось загрузить заказы")
@@ -175,13 +180,35 @@ export const useOrdersStore = defineStore("orders", () => {
     order.tableData.length = 0
   }
 
+  const searchOrders = async (searchTerm) => {
+    try {
+      if (!searchTerm) {
+        orders.value = allOrders.value
+        return
+      }
+
+      const q = searchTerm.toLowerCase()
+
+      orders.value = allOrders.value.filter(order =>
+        order.user?.address?.toLowerCase().includes(q) ||
+        order.user?.phone?.toLowerCase().includes(q) ||
+        order.total?.name?.toLowerCase().includes(q)
+      )
+
+    } catch (err) {
+      console.error("Ошибка поиска:", err)
+    }
+  }
+
   return {
     order,
     orders,
+    allOrders,
     updatePage,
     setTableData,
     removePage,
     savePage,
-    fetchOrders
+    fetchOrders,
+    searchOrders
   }
 })

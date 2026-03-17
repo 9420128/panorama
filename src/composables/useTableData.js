@@ -39,6 +39,7 @@ export function useTableData(calcSum) {
           .map((cell) => {
             cell = cell
             .replace(/#[^#]+#/g, '')
+            .replace(/x-2/g, '')
             .replace(/^\s*-\d+\s*$/gm, '')
             .trim()
 

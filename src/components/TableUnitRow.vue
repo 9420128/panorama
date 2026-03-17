@@ -37,10 +37,11 @@
               <!-- Редактируемое поле -->
               <div v-if="isEditingCell(j, t)">
                 <textarea
-                  v-model="row.options[j][t]"
+                  :value="row.options[j][t]"
                   class="w-full border border-blue-300 rounded px-1 py-0.5"
-                  @blur="saveCellEdit(index, j, t)"
-                  @keydown.enter="saveCellEdit(index, j, t)"
+                  @input="row.options[j][t] = $event.target.value"
+                  @keydown.enter.exact.prevent="saveCellEdit(index, j, t, $event.target.value)"
+                  @blur="saveCellEdit(index, j, t, $event.target.value)"
                 />
               </div>
               <span v-else v-html="td"></span>
@@ -140,13 +141,14 @@ function isEditingCell(optionIndex, cellIndex) {
 }
 
 // Сохранение редактирования
-function saveCellEdit(rowIndex, optionIndex, cellIndex) {
-  // Тут можно вызвать emit, чтобы уведомить родителя о изменении
+function saveCellEdit(rowIndex, optionIndex, cellIndex, value) {
+  const htmlValue = value.replace(/\n/g, "<br>")
+
   emit('cellUpdate', {
     rowIndex,
     optionIndex,
     cellIndex,
-    value: props.row.options[optionIndex][cellIndex],
+    value: htmlValue
   })
 
   editingCell.value = { rowIndex: null, optionIndex: null, cellIndex: null }
@@ -158,4 +160,25 @@ function cellRemove(rowIndex, optionIndex) {
     optionIndex,
   })
 }
+
+// function normalizeMoneyValue(value){
+//   if (typeof value !== 'string') return value
+//
+//   // убираем пробелы
+//   let v = value.trim()
+//
+//   // если формат 899,00 или 1 299,00
+//   v = v.replace(/\s/g, '')   // убираем пробелы
+//     .replace(',', '.')    // , → .
+//
+//   const number = Number(v)
+//
+//   // если это валидное число и целое — возвращаем целое
+//   if (!Number.isNaN(number)) {
+//     return Number.isInteger(number) ? number : number
+//   }
+//
+//   // если не число — возвращаем как есть
+//   return value
+// }
 </script>

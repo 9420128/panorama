@@ -4,6 +4,9 @@ export const sectionMap = {
   Услуги: { name: 'services', text: 'Услуги заказа:' },
 }
 
+const note = [
+  'без гарантии'
+]
 let rowName = ''
 
 export function rowSetName(cell, keyLength) {
@@ -14,6 +17,10 @@ export function rowSetName(cell, keyLength) {
       rowName = name
       return { text, name }
     }
+  }
+
+  if(note.some(key => cell.includes(key)) && keyLength === 3) {
+    keyLength = 2
   }
 
   if (rowName !== '' && keyLength < 3) {
@@ -35,7 +42,7 @@ export function shouldIgnoreRow(row) {
 }
 
 export function getToOptionsPrice(cells) {
-  const moneyRegex = /\d{1,3}(?:[ \u00A0]?\d{3})*[.,]\d{2}(?!\s?[a-zA-Zа-яА-Я])/
+  const moneyRegex = /^(?!.*[a-zA-Zа-яА-Я]).*\d{1,3}(?:[ \u00A0]?\d{3})*[.,]\d{2}/
   const price = []
 
   const processed = cells.map((cell) => {
@@ -50,7 +57,7 @@ export function getToOptionsPrice(cells) {
 }
 
 export function setClassName(cell, i, j, t = null) {
-  const moneyRegex = /\d{1,3}(?:[ \u00A0]?\d{3})*[.,]\d{2}(?!\s?[a-zA-Zа-яА-Я])/
+  const moneyRegex = /^(?!.*[a-zA-Zа-яА-Я]).*\d{1,3}(?:[ \u00A0]?\d{3})*[.,]\d{2}/
   let id = `id-${i}-${j}`
   if (t !== null) id += '-' + t
 
