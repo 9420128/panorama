@@ -14,7 +14,8 @@ export const useOrdersStore = defineStore("orders", () => {
     user: {
       client: '',
       phone: '',
-      address: ''
+      address: '',
+      comment: ''
     },
     total: {
       units: 0,
@@ -36,8 +37,6 @@ export const useOrdersStore = defineStore("orders", () => {
 
   // === Методы для TABLE DATA ===
   const setTableData = () => {
-
-    // console.log(order.tableData)
 
     const newData = order.tableData.map(row => {
       const normalizedOptions = Array.isArray(row.options)
@@ -167,6 +166,7 @@ export const useOrdersStore = defineStore("orders", () => {
     order.user.client = ''
     order.user.phone = ''
     order.user.address = ''
+    order.user.comment = ''
 
     order.total.units = 0
     order.total.qty = 0
@@ -200,10 +200,24 @@ export const useOrdersStore = defineStore("orders", () => {
     }
   }
 
+  const addNoteMessage = (message) => {
+    if (!message) return
+
+    if (!order.user.comment.includes(message)) {
+      order.user.comment += (order.user.comment ? '\n' : '') + message
+    }
+  }
+
+  const clearNoteMessage = () => {
+    order.user.comment = ''
+  }
+
   return {
     order,
     orders,
     allOrders,
+    addNoteMessage,
+    clearNoteMessage,
     updatePage,
     setTableData,
     removePage,

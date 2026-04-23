@@ -1,3 +1,5 @@
+import { useOrdersStore } from '@/stores/useOrdersStore'
+
 export const sectionMap = {
   Юнит: { name: 'units', text: '' },
   Дополнения: { name: 'components', text: 'Дополнения:' },
@@ -5,12 +7,15 @@ export const sectionMap = {
 }
 
 const note = [
-  'без гарантии'
+  'без гарантии',
+  'смещение'
 ]
+
 let rowName = ''
 
 export function rowSetName(cell, keyLength) {
   if (!cell) return { text: '', name: '' }
+  const orderStore = useOrdersStore()
 
   for (const [key, { name, text }] of Object.entries(sectionMap)) {
     if (cell.includes(key)) {
@@ -21,6 +26,7 @@ export function rowSetName(cell, keyLength) {
 
   if(note.some(key => cell.includes(key)) && keyLength === 3) {
     keyLength = 2
+    orderStore.addNoteMessage(cell)
   }
 
   if (rowName !== '' && keyLength < 3) {
@@ -34,7 +40,7 @@ export function rowSetName(cell, keyLength) {
 export function shouldIgnoreRow(row) {
   if (!row || !Array.isArray(row.cells) || !row.cells[0]) return true
 
-  const ignoreWords = ['Заказчик', 'Прод', 'печа', 'Внимательно']
+  const ignoreWords = ['Заказчик', 'Прод', 'печа', 'Внимательно', 'Cчитал', 'Покупатель', 'проект', 'Считал']
   const hasIgnoredWord = ignoreWords.some((word) => row.cells[0].includes(word))
   const isHeaderRow = row.name === 'services' && row.cells[0].includes('Наименование')
 

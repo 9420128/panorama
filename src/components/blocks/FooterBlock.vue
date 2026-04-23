@@ -5,6 +5,24 @@
       подписания КП в работу претензии по вышеуказанным параметрам приниматься не будут, так как КП
       будет считаться согласованным.
     </p>
+    <label
+      class="flex-1 flex items-start gap-2 mb-2"
+      :class="{ 'bg-gray-200 px-2 py-1 border border-gray-300': orderStore.order.user.comment?.trim() }"
+    >
+      <span class="font-bold">Примечание:</span>
+      <div
+        v-if="printStore.isPrinting"
+        class="flex-1 whitespace-pre-line"
+      >
+        {{ orderStore.order.user.comment }}
+      </div>
+      <textarea
+        v-else
+        v-model="orderStore.order.user.comment"
+        type="text"
+        class="flex-1 focus:border-blue-500 focus:ring-0 outline-none text-gray-700 bg-transparent"
+      />
+    </label>
     <p v-if="total.units" class="font-bold">Общая площадь заказа: {{ total.units }} кв.м.</p>
     <p v-if="total.qty" class="font-bold">Количество изделий: {{ total.qty }} шт.</p>
   </div>
@@ -33,8 +51,10 @@
   </div>
 </template>
 <script setup>
+import { usePrintStore } from '@/stores/usePrintStore'
 import { useOrdersStore } from '@/stores/useOrdersStore'
 
+const printStore = usePrintStore()
 const orderStore = useOrdersStore()
 const total = orderStore.order.total
 </script>
