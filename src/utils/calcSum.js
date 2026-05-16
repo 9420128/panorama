@@ -12,15 +12,18 @@ export function formatRub(value) {
 /**
  * @param {Array} data - tableData.value
  * @param {Object} percent - процентные значения { units, components, services }
+ * @param {Object} sales - процентные значения { units, components, services }
  * @param {Object} total - объект total { sum, ... }
  */
-export function calculateSum(data, percent, total) {
+export function calculateSum(data, percent, sales, total) {
   if (!data || !Array.isArray(data)) {
     console.warn('⚠️ Некорректные данные для расчёта суммы')
     return
   }
 
   let totalSumThis = 0
+  let totalSumSale = 0
+  let sumSale = 0
 
   for (const block of data) {
     if (!block.price || !Array.isArray(block.price)) continue
@@ -46,7 +49,14 @@ export function calculateSum(data, percent, total) {
 
     block.sum = formatRub(sum)
     totalSumThis += sum
+
+    //   sale
+    const salesThis = sales[block.name] || 0
+    const calculated = sum * (1 - salesThis / 100)
+    sumSale += isNaN(calculated) ? 0 : calculated
+
   }
 
   total.sum = formatRub(totalSumThis)
+  total.sumSales = formatRub(sumSale)
 }

@@ -21,9 +21,15 @@ export const useOrdersStore = defineStore("orders", () => {
       units: 0,
       qty: 0,
       sum: 0,
+      sumSales: 0,
       name: `Коммерческое предложение 958${day} от ${day}.${month}.${year}`
     },
     percent: {
+      units: 0,
+      components: 0,
+      services: 0,
+    },
+    sales: {
       units: 0,
       components: 0,
       services: 0,
@@ -66,6 +72,8 @@ export const useOrdersStore = defineStore("orders", () => {
       await updateOrder(orderId, {
         user: order.user,
         total: order.total,
+        percent: order.percent,
+        sales: order.sales,
         tableData: order.tableData
       });
 
@@ -142,10 +150,14 @@ export const useOrdersStore = defineStore("orders", () => {
               sum: Number(String(order.total.sum).replace(/\s+/g, '').replace(',', '.')) || 0
             },
             percent: {
-              ...order.percent,
-              units: Number(order.percent.units) || 0,
-              components: Number(order.percent.components) || 0,
-              services: Number(order.percent.services) || 0
+              units: Number(order.percent?.units) || 0,
+              components: Number(order.percent?.components) || 0,
+              services: Number(order.percent?.services) || 0
+            },
+            sales: {
+              units: Number(order.sales?.units) || 0,
+              components: Number(order.sales?.components) || 0,
+              services: Number(order.sales?.services) || 0
             },
             // id: order.id
           }
@@ -176,6 +188,10 @@ export const useOrdersStore = defineStore("orders", () => {
     order.percent.units = 0
     order.percent.components = 0
     order.percent.services = 0
+
+    order.sales.units = 0
+    order.sales.components = 0
+    order.sales.services = 0
 
     order.tableData.length = 0
   }

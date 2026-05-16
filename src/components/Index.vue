@@ -13,7 +13,7 @@ import LogoutBlock from '@/components/blocks/LogoutBlock.vue'
 const ordersStore = useOrdersStore()
 
 const calcSum = () => {
-  calculateSum(tableData, ordersStore.order.percent, total)
+  calculateSum(tableData, ordersStore.order.percent, ordersStore.order.sales, total)
 }
 
 const { tableData, fileName, handleFileUpload, createRow, cellUpdate, cellRemove, total } = useTableData(calcSum)

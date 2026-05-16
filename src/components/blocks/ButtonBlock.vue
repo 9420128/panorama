@@ -11,7 +11,7 @@
 
     <OrdersListBlock v-if="Array.isArray(orders)" :orders="orders" @selectOrder="handleSelectOrder" @deleteOrder="handleDeleteOrder" />
 
-    <div class="flex flex-wrap justify-center gap-2 mb-3">
+    <div class="fixed bottom-0 left-0 right-0 bg-white p-3 flex flex-wrap justify-center gap-2 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] z-50 mb-0">
       <AppButton variant="success" size="sm" @click.stop="openModal = true">Добавить</AppButton>
       <AppButton variant="primary" size="sm" @click="printPage">Печать / PDF</AppButton>
       <AppButton variant="danger" size="sm" @click="savePageHandler">Сохранить</AppButton>
@@ -137,6 +137,7 @@ function handleSelectOrder(order) {
   ordersStore.order.user = { ...order.user }
   ordersStore.order.total = { ...order.total }
   ordersStore.order.percent = { ...order.percent }
+  ordersStore.order.sales = { ...order.sales }
 }
 
 </script>
